@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>CSS Sudoku</title>
+  </head>
+  <body>
+    <style>
+      body {
+        display: grid;
+        justify-items: center;
+        align-items: center;
+      }
+
+      #board {
+        padding: 7px;
+        background: black;
+
+        display: grid;
+        grid-template-rows: repeat(9, auto);
+        grid-template-columns: repeat(9, auto);
+        column-gap: 2px;
+        row-gap: 2px;
+
+        margin-bottom: 70px;
+      }
+
+      .cell {
+        width: 50px;
+        height: 50px;
+        background: white;
+
+        display: grid;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .cell:hover {
+        background: rgb(214, 233, 240);
+      }
+
+      .cell:focus {
+        background: lightblue;
+      }
+
+      .cell:nth-child(3n):not(:nth-child(9n)) {
+        margin-right: 3px;
+      }
+
+      .cell:nth-child(27n + 28),
+      .cell:nth-child(27n + 29),
+      .cell:nth-child(27n + 30),
+      .cell:nth-child(27n + 31),
+      .cell:nth-child(27n + 32),
+      .cell:nth-child(27n + 33),
+      .cell:nth-child(27n + 34),
+      .cell:nth-child(27n + 35),
+      .cell:nth-child(27n + 36) {
+        margin-top: 3px;
+      }
+
+      #board::after {
+        content: " ";
+        position: absolute;
+        top: 497px;
+        height: 50px;
+        width: 500px;
+        left: calc(100vw / 2 - 250px);
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.623);
+      }
+
+      .cell > label {
+        position: absolute;
+        top: 500px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+        border: 2px solid darkgreen;
+        border-radius: 7px;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        visibility: hidden;
+      }
+
+      .cell:first-of-type > label {
+        visibility: visible;
+      }
+
+      .cell > input[value=" "] + label {
+        left: calc(100vw / 2 + 5px - 250px);
+      }
+
+      .cell > input[value="1"] + label {
+        left: calc(100vw / 2 + 5px - 200px);
+      }
+
+      .cell > input[value="2"] + label {
+        left: calc(100vw / 2 + 5px - 150px);
+      }
+
+      .cell > input[value="3"] + label {
+        left: calc(100vw / 2 + 5px - 100px);
+      }
+
+      .cell > input[value="4"] + label {
+        left: calc(100vw / 2 + 5px - 50px);
+      }
+
+      .cell > input[value="5"] + label {
+        left: calc(100vw / 2 + 5px);
+      }
+
+      .cell > input[value="6"] + label {
+        left: calc(100vw / 2 + 5px + 50px);
+      }
+
+      .cell > input[value="7"] + label {
+        left: calc(100vw / 2 + 5px + 100px);
+      }
+
+      .cell > input[value="8"] + label {
+        left: calc(100vw / 2 + 5px + 150px);
+      }
+
+      .cell > input[value="9"] + label {
+        left: calc(100vw / 2 + 5px + 200px);
+      }
+
+      .cell:focus > label {
+        z-index: 10;
+        visibility: visible;
+      }
+
+      .cell > input {
+        display: none;
+
+      }
+
+      .cell > input:checked {
+        width: 50px;
+        height: 50px;
+        margin: 0;
+        visibility: hidden;
+
+        display: inline-grid;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .cell > input::after {
+        content: " ";
+        font-size: 30px;
+        visibility: visible;
+      }
+
+      .cell > input[value="1"]:checked::after {
+        content: "1";
+      }
+
+      .cell > input[value="2"]:checked::after {
+        content: "2";
+      }
+
+      .cell > input[value="3"]:checked::after {
+        content: "3";
+      }
+
+      .cell > input[value="4"]:checked::after {
+        content: "4";
+      }
+
+      .cell > input[value="5"]:checked::after {
+        content: "5";
+      }
+
+      .cell > input[value="6"]:checked::after {
+        content: "6";
+      }
+
+      .cell > input[value="7"]:checked::after {
+        content: "7";
+      }
+
+      .cell > input[value="8"]:checked::after {
+        content: "8";
+      }
+
+      .cell > input[value="9"]:checked::after {
+        content: "9";
+      }
+    </style>
+    <form>
+      <div id="board">
+        <div class="cell" tabindex="0">
+          <input type="radio" id="000" name="00" value=" ">
+          <label for="000">X</label>
+          <input type="radio" id="001" name="00" value="1">
+          <label for="001">1</label>
+          <input type="radio" id="002" name="00" value="2">
+          <label for="002">2</label>
+          <input type="radio" id="003" name="00" value="3">
+          <label for="003">3</label>
+          <input type="radio" id="004" name="00" value="4">
+          <label for="004">4</label>
+          <input type="radio" id="005" name="00" value="5">
+          <label for="005">5</label>
+          <input type="radio" id="006" name="00" value="6">
+          <label for="006">6</label>
+          <input type="radio" id="007" name="00" value="7">
+          <label for="007">7</label>
+          <input type="radio" id="008" name="00" value="8">
+          <label for="008">8</label>
+          <input type="radio" id="009" name="00" value="9">
+          <label for="009">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="010" name="01" value=" ">
+          <label for="010">X</label>
+          <input type="radio" id="011" name="01" value="1">
+          <label for="011">1</label>
+          <input type="radio" id="012" name="01" value="2">
+          <label for="012">2</label>
+          <input type="radio" id="013" name="01" value="3">
+          <label for="013">3</label>
+          <input type="radio" id="014" name="01" value="4">
+          <label for="014">4</label>
+          <input type="radio" id="015" name="01" value="5">
+          <label for="015">5</label>
+          <input type="radio" id="016" name="01" value="6">
+          <label for="016">6</label>
+          <input type="radio" id="017" name="01" value="7">
+          <label for="017">7</label>
+          <input type="radio" id="018" name="01" value="8">
+          <label for="018">8</label>
+          <input type="radio" id="019" name="01" value="9">
+          <label for="019">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="020" name="02" value=" ">
+          <label for="020">X</label>
+          <input type="radio" id="021" name="02" value="1">
+          <label for="021">1</label>
+          <input type="radio" id="022" name="02" value="2">
+          <label for="022">2</label>
+          <input type="radio" id="023" name="02" value="3">
+          <label for="023">3</label>
+          <input type="radio" id="024" name="02" value="4">
+          <label for="024">4</label>
+          <input type="radio" id="025" name="02" value="5">
+          <label for="025">5</label>
+          <input type="radio" id="026" name="02" value="6">
+          <label for="026">6</label>
+          <input type="radio" id="027" name="02" value="7">
+          <label for="027">7</label>
+          <input type="radio" id="028" name="02" value="8">
+          <label for="028">8</label>
+          <input type="radio" id="029" name="02" value="9">
+          <label for="029">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="030" name="03" value=" ">
+          <label for="030">X</label>
+          <input type="radio" id="031" name="03" value="1">
+          <label for="031">1</label>
+          <input type="radio" id="032" name="03" value="2">
+          <label for="032">2</label>
+          <input type="radio" id="033" name="03" value="3">
+          <label for="033">3</label>
+          <input type="radio" id="034" name="03" value="4">
+          <label for="034">4</label>
+          <input type="radio" id="035" name="03" value="5">
+          <label for="035">5</label>
+          <input type="radio" id="036" name="03" value="6">
+          <label for="036">6</label>
+          <input type="radio" id="037" name="03" value="7">
+          <label for="037">7</label>
+          <input type="radio" id="038" name="03" value="8">
+          <label for="038">8</label>
+          <input type="radio" id="039" name="03" value="9">
+          <label for="039">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="040" name="04" value=" ">
+          <label for="040">X</label>
+          <input type="radio" id="041" name="04" value="1">
+          <label for="041">1</label>
+          <input type="radio" id="042" name="04" value="2">
+          <label for="042">2</label>
+          <input type="radio" id="043" name="04" value="3">
+          <label for="043">3</label>
+          <input type="radio" id="044" name="04" value="4">
+          <label for="044">4</label>
+          <input type="radio" id="045" name="04" value="5">
+          <label for="045">5</label>
+          <input type="radio" id="046" name="04" value="6">
+          <label for="046">6</label>
+          <input type="radio" id="047" name="04" value="7">
+          <label for="047">7</label>
+          <input type="radio" id="048" name="04" value="8">
+          <label for="048">8</label>
+          <input type="radio" id="049" name="04" value="9">
+          <label for="049">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="050" name="05" value=" ">
+          <label for="050">X</label>
+          <input type="radio" id="051" name="05" value="1">
+          <label for="051">1</label>
+          <input type="radio" id="052" name="05" value="2">
+          <label for="052">2</label>
+          <input type="radio" id="053" name="05" value="3">
+          <label for="053">3</label>
+          <input type="radio" id="054" name="05" value="4">
+          <label for="054">4</label>
+          <input type="radio" id="055" name="05" value="5">
+          <label for="055">5</label>
+          <input type="radio" id="056" name="05" value="6">
+          <label for="056">6</label>
+          <input type="radio" id="057" name="05" value="7">
+          <label for="057">7</label>
+          <input type="radio" id="058" name="05" value="8">
+          <label for="058">8</label>
+          <input type="radio" id="059" name="05" value="9">
+          <label for="059">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="060" name="06" value=" ">
+          <label for="060">X</label>
+          <input type="radio" id="061" name="06" value="1">
+          <label for="061">1</label>
+          <input type="radio" id="062" name="06" value="2">
+          <label for="062">2</label>
+          <input type="radio" id="063" name="06" value="3">
+          <label for="063">3</label>
+          <input type="radio" id="064" name="06" value="4">
+          <label for="064">4</label>
+          <input type="radio" id="065" name="06" value="5">
+          <label for="065">5</label>
+          <input type="radio" id="066" name="06" value="6">
+          <label for="066">6</label>
+          <input type="radio" id="067" name="06" value="7">
+          <label for="067">7</label>
+          <input type="radio" id="068" name="06" value="8">
+          <label for="068">8</label>
+          <input type="radio" id="069" name="06" value="9">
+          <label for="069">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="070" name="07" value=" ">
+          <label for="070">X</label>
+          <input type="radio" id="071" name="07" value="1">
+          <label for="071">1</label>
+          <input type="radio" id="072" name="07" value="2">
+          <label for="072">2</label>
+          <input type="radio" id="073" name="07" value="3">
+          <label for="073">3</label>
+          <input type="radio" id="074" name="07" value="4">
+          <label for="074">4</label>
+          <input type="radio" id="075" name="07" value="5">
+          <label for="075">5</label>
+          <input type="radio" id="076" name="07" value="6">
+          <label for="076">6</label>
+          <input type="radio" id="077" name="07" value="7">
+          <label for="077">7</label>
+          <input type="radio" id="078" name="07" value="8">
+          <label for="078">8</label>
+          <input type="radio" id="079" name="07" value="9">
+          <label for="079">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="080" name="08" value=" ">
+          <label for="080">X</label>
+          <input type="radio" id="081" name="08" value="1">
+          <label for="081">1</label>
+          <input type="radio" id="082" name="08" value="2">
+          <label for="082">2</label>
+          <input type="radio" id="083" name="08" value="3">
+          <label for="083">3</label>
+          <input type="radio" id="084" name="08" value="4">
+          <label for="084">4</label>
+          <input type="radio" id="085" name="08" value="5">
+          <label for="085">5</label>
+          <input type="radio" id="086" name="08" value="6">
+          <label for="086">6</label>
+          <input type="radio" id="087" name="08" value="7">
+          <label for="087">7</label>
+          <input type="radio" id="088" name="08" value="8">
+          <label for="088">8</label>
+          <input type="radio" id="089" name="08" value="9">
+          <label for="089">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="100" name="10" value=" ">
+          <label for="100">X</label>
+          <input type="radio" id="101" name="10" value="1">
+          <label for="101">1</label>
+          <input type="radio" id="102" name="10" value="2">
+          <label for="102">2</label>
+          <input type="radio" id="103" name="10" value="3">
+          <label for="103">3</label>
+          <input type="radio" id="104" name="10" value="4">
+          <label for="104">4</label>
+          <input type="radio" id="105" name="10" value="5">
+          <label for="105">5</label>
+          <input type="radio" id="106" name="10" value="6">
+          <label for="106">6</label>
+          <input type="radio" id="107" name="10" value="7">
+          <label for="107">7</label>
+          <input type="radio" id="108" name="10" value="8">
+          <label for="108">8</label>
+          <input type="radio" id="109" name="10" value="9">
+          <label for="109">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="110" name="11" value=" ">
+          <label for="110">X</label>
+          <input type="radio" id="111" name="11" value="1">
+          <label for="111">1</label>
+          <input type="radio" id="112" name="11" value="2">
+          <label for="112">2</label>
+          <input type="radio" id="113" name="11" value="3">
+          <label for="113">3</label>
+          <input type="radio" id="114" name="11" value="4">
+          <label for="114">4</label>
+          <input type="radio" id="115" name="11" value="5">
+          <label for="115">5</label>
+          <input type="radio" id="116" name="11" value="6">
+          <label for="116">6</label>
+          <input type="radio" id="117" name="11" value="7">
+          <label for="117">7</label>
+          <input type="radio" id="118" name="11" value="8">
+          <label for="118">8</label>
+          <input type="radio" id="119" name="11" value="9">
+          <label for="119">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="120" name="12" value=" ">
+          <label for="120">X</label>
+          <input type="radio" id="121" name="12" value="1">
+          <label for="121">1</label>
+          <input type="radio" id="122" name="12" value="2">
+          <label for="122">2</label>
+          <input type="radio" id="123" name="12" value="3">
+          <label for="123">3</label>
+          <input type="radio" id="124" name="12" value="4">
+          <label for="124">4</label>
+          <input type="radio" id="125" name="12" value="5">
+          <label for="125">5</label>
+          <input type="radio" id="126" name="12" value="6">
+          <label for="126">6</label>
+          <input type="radio" id="127" name="12" value="7">
+          <label for="127">7</label>
+          <input type="radio" id="128" name="12" value="8">
+          <label for="128">8</label>
+          <input type="radio" id="129" name="12" value="9">
+          <label for="129">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="130" name="13" value=" ">
+          <label for="130">X</label>
+          <input type="radio" id="131" name="13" value="1">
+          <label for="131">1</label>
+          <input type="radio" id="132" name="13" value="2">
+          <label for="132">2</label>
+          <input type="radio" id="133" name="13" value="3">
+          <label for="133">3</label>
+          <input type="radio" id="134" name="13" value="4">
+          <label for="134">4</label>
+          <input type="radio" id="135" name="13" value="5">
+          <label for="135">5</label>
+          <input type="radio" id="136" name="13" value="6">
+          <label for="136">6</label>
+          <input type="radio" id="137" name="13" value="7">
+          <label for="137">7</label>
+          <input type="radio" id="138" name="13" value="8">
+          <label for="138">8</label>
+          <input type="radio" id="139" name="13" value="9">
+          <label for="139">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="140" name="14" value=" ">
+          <label for="140">X</label>
+          <input type="radio" id="141" name="14" value="1">
+          <label for="141">1</label>
+          <input type="radio" id="142" name="14" value="2">
+          <label for="142">2</label>
+          <input type="radio" id="143" name="14" value="3">
+          <label for="143">3</label>
+          <input type="radio" id="144" name="14" value="4">
+          <label for="144">4</label>
+          <input type="radio" id="145" name="14" value="5">
+          <label for="145">5</label>
+          <input type="radio" id="146" name="14" value="6">
+          <label for="146">6</label>
+          <input type="radio" id="147" name="14" value="7">
+          <label for="147">7</label>
+          <input type="radio" id="148" name="14" value="8">
+          <label for="148">8</label>
+          <input type="radio" id="149" name="14" value="9">
+          <label for="149">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="150" name="15" value=" ">
+          <label for="150">X</label>
+          <input type="radio" id="151" name="15" value="1">
+          <label for="151">1</label>
+          <input type="radio" id="152" name="15" value="2">
+          <label for="152">2</label>
+          <input type="radio" id="153" name="15" value="3">
+          <label for="153">3</label>
+          <input type="radio" id="154" name="15" value="4">
+          <label for="154">4</label>
+          <input type="radio" id="155" name="15" value="5">
+          <label for="155">5</label>
+          <input type="radio" id="156" name="15" value="6">
+          <label for="156">6</label>
+          <input type="radio" id="157" name="15" value="7">
+          <label for="157">7</label>
+          <input type="radio" id="158" name="15" value="8">
+          <label for="158">8</label>
+          <input type="radio" id="159" name="15" value="9">
+          <label for="159">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="160" name="16" value=" ">
+          <label for="160">X</label>
+          <input type="radio" id="161" name="16" value="1">
+          <label for="161">1</label>
+          <input type="radio" id="162" name="16" value="2">
+          <label for="162">2</label>
+          <input type="radio" id="163" name="16" value="3">
+          <label for="163">3</label>
+          <input type="radio" id="164" name="16" value="4">
+          <label for="164">4</label>
+          <input type="radio" id="165" name="16" value="5">
+          <label for="165">5</label>
+          <input type="radio" id="166" name="16" value="6">
+          <label for="166">6</label>
+          <input type="radio" id="167" name="16" value="7">
+          <label for="167">7</label>
+          <input type="radio" id="168" name="16" value="8">
+          <label for="168">8</label>
+          <input type="radio" id="169" name="16" value="9">
+          <label for="169">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="170" name="17" value=" ">
+          <label for="170">X</label>
+          <input type="radio" id="171" name="17" value="1">
+          <label for="171">1</label>
+          <input type="radio" id="172" name="17" value="2">
+          <label for="172">2</label>
+          <input type="radio" id="173" name="17" value="3">
+          <label for="173">3</label>
+          <input type="radio" id="174" name="17" value="4">
+          <label for="174">4</label>
+          <input type="radio" id="175" name="17" value="5">
+          <label for="175">5</label>
+          <input type="radio" id="176" name="17" value="6">
+          <label for="176">6</label>
+          <input type="radio" id="177" name="17" value="7">
+          <label for="177">7</label>
+          <input type="radio" id="178" name="17" value="8">
+          <label for="178">8</label>
+          <input type="radio" id="179" name="17" value="9">
+          <label for="179">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="180" name="18" value=" ">
+          <label for="180">X</label>
+          <input type="radio" id="181" name="18" value="1">
+          <label for="181">1</label>
+          <input type="radio" id="182" name="18" value="2">
+          <label for="182">2</label>
+          <input type="radio" id="183" name="18" value="3">
+          <label for="183">3</label>
+          <input type="radio" id="184" name="18" value="4">
+          <label for="184">4</label>
+          <input type="radio" id="185" name="18" value="5">
+          <label for="185">5</label>
+          <input type="radio" id="186" name="18" value="6">
+          <label for="186">6</label>
+          <input type="radio" id="187" name="18" value="7">
+          <label for="187">7</label>
+          <input type="radio" id="188" name="18" value="8">
+          <label for="188">8</label>
+          <input type="radio" id="189" name="18" value="9">
+          <label for="189">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="200" name="20" value=" ">
+          <label for="200">X</label>
+          <input type="radio" id="201" name="20" value="1">
+          <label for="201">1</label>
+          <input type="radio" id="202" name="20" value="2">
+          <label for="202">2</label>
+          <input type="radio" id="203" name="20" value="3">
+          <label for="203">3</label>
+          <input type="radio" id="204" name="20" value="4">
+          <label for="204">4</label>
+          <input type="radio" id="205" name="20" value="5">
+          <label for="205">5</label>
+          <input type="radio" id="206" name="20" value="6">
+          <label for="206">6</label>
+          <input type="radio" id="207" name="20" value="7">
+          <label for="207">7</label>
+          <input type="radio" id="208" name="20" value="8">
+          <label for="208">8</label>
+          <input type="radio" id="209" name="20" value="9">
+          <label for="209">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="210" name="21" value=" ">
+          <label for="210">X</label>
+          <input type="radio" id="211" name="21" value="1">
+          <label for="211">1</label>
+          <input type="radio" id="212" name="21" value="2">
+          <label for="212">2</label>
+          <input type="radio" id="213" name="21" value="3">
+          <label for="213">3</label>
+          <input type="radio" id="214" name="21" value="4">
+          <label for="214">4</label>
+          <input type="radio" id="215" name="21" value="5">
+          <label for="215">5</label>
+          <input type="radio" id="216" name="21" value="6">
+          <label for="216">6</label>
+          <input type="radio" id="217" name="21" value="7">
+          <label for="217">7</label>
+          <input type="radio" id="218" name="21" value="8">
+          <label for="218">8</label>
+          <input type="radio" id="219" name="21" value="9">
+          <label for="219">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="220" name="22" value=" ">
+          <label for="220">X</label>
+          <input type="radio" id="221" name="22" value="1">
+          <label for="221">1</label>
+          <input type="radio" id="222" name="22" value="2">
+          <label for="222">2</label>
+          <input type="radio" id="223" name="22" value="3">
+          <label for="223">3</label>
+          <input type="radio" id="224" name="22" value="4">
+          <label for="224">4</label>
+          <input type="radio" id="225" name="22" value="5">
+          <label for="225">5</label>
+          <input type="radio" id="226" name="22" value="6">
+          <label for="226">6</label>
+          <input type="radio" id="227" name="22" value="7">
+          <label for="227">7</label>
+          <input type="radio" id="228" name="22" value="8">
+          <label for="228">8</label>
+          <input type="radio" id="229" name="22" value="9">
+          <label for="229">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="230" name="23" value=" ">
+          <label for="230">X</label>
+          <input type="radio" id="231" name="23" value="1">
+          <label for="231">1</label>
+          <input type="radio" id="232" name="23" value="2">
+          <label for="232">2</label>
+          <input type="radio" id="233" name="23" value="3">
+          <label for="233">3</label>
+          <input type="radio" id="234" name="23" value="4">
+          <label for="234">4</label>
+          <input type="radio" id="235" name="23" value="5">
+          <label for="235">5</label>
+          <input type="radio" id="236" name="23" value="6">
+          <label for="236">6</label>
+          <input type="radio" id="237" name="23" value="7">
+          <label for="237">7</label>
+          <input type="radio" id="238" name="23" value="8">
+          <label for="238">8</label>
+          <input type="radio" id="239" name="23" value="9">
+          <label for="239">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="240" name="24" value=" ">
+          <label for="240">X</label>
+          <input type="radio" id="241" name="24" value="1">
+          <label for="241">1</label>
+          <input type="radio" id="242" name="24" value="2">
+          <label for="242">2</label>
+          <input type="radio" id="243" name="24" value="3">
+          <label for="243">3</label>
+          <input type="radio" id="244" name="24" value="4">
+          <label for="244">4</label>
+          <input type="radio" id="245" name="24" value="5">
+          <label for="245">5</label>
+          <input type="radio" id="246" name="24" value="6">
+          <label for="246">6</label>
+          <input type="radio" id="247" name="24" value="7">
+          <label for="247">7</label>
+          <input type="radio" id="248" name="24" value="8">
+          <label for="248">8</label>
+          <input type="radio" id="249" name="24" value="9">
+          <label for="249">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="250" name="25" value=" ">
+          <label for="250">X</label>
+          <input type="radio" id="251" name="25" value="1">
+          <label for="251">1</label>
+          <input type="radio" id="252" name="25" value="2">
+          <label for="252">2</label>
+          <input type="radio" id="253" name="25" value="3">
+          <label for="253">3</label>
+          <input type="radio" id="254" name="25" value="4">
+          <label for="254">4</label>
+          <input type="radio" id="255" name="25" value="5">
+          <label for="255">5</label>
+          <input type="radio" id="256" name="25" value="6">
+          <label for="256">6</label>
+          <input type="radio" id="257" name="25" value="7">
+          <label for="257">7</label>
+          <input type="radio" id="258" name="25" value="8">
+          <label for="258">8</label>
+          <input type="radio" id="259" name="25" value="9">
+          <label for="259">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="260" name="26" value=" ">
+          <label for="260">X</label>
+          <input type="radio" id="261" name="26" value="1">
+          <label for="261">1</label>
+          <input type="radio" id="262" name="26" value="2">
+          <label for="262">2</label>
+          <input type="radio" id="263" name="26" value="3">
+          <label for="263">3</label>
+          <input type="radio" id="264" name="26" value="4">
+          <label for="264">4</label>
+          <input type="radio" id="265" name="26" value="5">
+          <label for="265">5</label>
+          <input type="radio" id="266" name="26" value="6">
+          <label for="266">6</label>
+          <input type="radio" id="267" name="26" value="7">
+          <label for="267">7</label>
+          <input type="radio" id="268" name="26" value="8">
+          <label for="268">8</label>
+          <input type="radio" id="269" name="26" value="9">
+          <label for="269">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="270" name="27" value=" ">
+          <label for="270">X</label>
+          <input type="radio" id="271" name="27" value="1">
+          <label for="271">1</label>
+          <input type="radio" id="272" name="27" value="2">
+          <label for="272">2</label>
+          <input type="radio" id="273" name="27" value="3">
+          <label for="273">3</label>
+          <input type="radio" id="274" name="27" value="4">
+          <label for="274">4</label>
+          <input type="radio" id="275" name="27" value="5">
+          <label for="275">5</label>
+          <input type="radio" id="276" name="27" value="6">
+          <label for="276">6</label>
+          <input type="radio" id="277" name="27" value="7">
+          <label for="277">7</label>
+          <input type="radio" id="278" name="27" value="8">
+          <label for="278">8</label>
+          <input type="radio" id="279" name="27" value="9">
+          <label for="279">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="280" name="28" value=" ">
+          <label for="280">X</label>
+          <input type="radio" id="281" name="28" value="1">
+          <label for="281">1</label>
+          <input type="radio" id="282" name="28" value="2">
+          <label for="282">2</label>
+          <input type="radio" id="283" name="28" value="3">
+          <label for="283">3</label>
+          <input type="radio" id="284" name="28" value="4">
+          <label for="284">4</label>
+          <input type="radio" id="285" name="28" value="5">
+          <label for="285">5</label>
+          <input type="radio" id="286" name="28" value="6">
+          <label for="286">6</label>
+          <input type="radio" id="287" name="28" value="7">
+          <label for="287">7</label>
+          <input type="radio" id="288" name="28" value="8">
+          <label for="288">8</label>
+          <input type="radio" id="289" name="28" value="9">
+          <label for="289">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="300" name="30" value=" ">
+          <label for="300">X</label>
+          <input type="radio" id="301" name="30" value="1">
+          <label for="301">1</label>
+          <input type="radio" id="302" name="30" value="2">
+          <label for="302">2</label>
+          <input type="radio" id="303" name="30" value="3">
+          <label for="303">3</label>
+          <input type="radio" id="304" name="30" value="4">
+          <label for="304">4</label>
+          <input type="radio" id="305" name="30" value="5">
+          <label for="305">5</label>
+          <input type="radio" id="306" name="30" value="6">
+          <label for="306">6</label>
+          <input type="radio" id="307" name="30" value="7">
+          <label for="307">7</label>
+          <input type="radio" id="308" name="30" value="8">
+          <label for="308">8</label>
+          <input type="radio" id="309" name="30" value="9">
+          <label for="309">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="310" name="31" value=" ">
+          <label for="310">X</label>
+          <input type="radio" id="311" name="31" value="1">
+          <label for="311">1</label>
+          <input type="radio" id="312" name="31" value="2">
+          <label for="312">2</label>
+          <input type="radio" id="313" name="31" value="3">
+          <label for="313">3</label>
+          <input type="radio" id="314" name="31" value="4">
+          <label for="314">4</label>
+          <input type="radio" id="315" name="31" value="5">
+          <label for="315">5</label>
+          <input type="radio" id="316" name="31" value="6">
+          <label for="316">6</label>
+          <input type="radio" id="317" name="31" value="7">
+          <label for="317">7</label>
+          <input type="radio" id="318" name="31" value="8">
+          <label for="318">8</label>
+          <input type="radio" id="319" name="31" value="9">
+          <label for="319">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="320" name="32" value=" ">
+          <label for="320">X</label>
+          <input type="radio" id="321" name="32" value="1">
+          <label for="321">1</label>
+          <input type="radio" id="322" name="32" value="2">
+          <label for="322">2</label>
+          <input type="radio" id="323" name="32" value="3">
+          <label for="323">3</label>
+          <input type="radio" id="324" name="32" value="4">
+          <label for="324">4</label>
+          <input type="radio" id="325" name="32" value="5">
+          <label for="325">5</label>
+          <input type="radio" id="326" name="32" value="6">
+          <label for="326">6</label>
+          <input type="radio" id="327" name="32" value="7">
+          <label for="327">7</label>
+          <input type="radio" id="328" name="32" value="8">
+          <label for="328">8</label>
+          <input type="radio" id="329" name="32" value="9">
+          <label for="329">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="330" name="33" value=" ">
+          <label for="330">X</label>
+          <input type="radio" id="331" name="33" value="1">
+          <label for="331">1</label>
+          <input type="radio" id="332" name="33" value="2">
+          <label for="332">2</label>
+          <input type="radio" id="333" name="33" value="3">
+          <label for="333">3</label>
+          <input type="radio" id="334" name="33" value="4">
+          <label for="334">4</label>
+          <input type="radio" id="335" name="33" value="5">
+          <label for="335">5</label>
+          <input type="radio" id="336" name="33" value="6">
+          <label for="336">6</label>
+          <input type="radio" id="337" name="33" value="7">
+          <label for="337">7</label>
+          <input type="radio" id="338" name="33" value="8">
+          <label for="338">8</label>
+          <input type="radio" id="339" name="33" value="9">
+          <label for="339">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="340" name="34" value=" ">
+          <label for="340">X</label>
+          <input type="radio" id="341" name="34" value="1">
+          <label for="341">1</label>
+          <input type="radio" id="342" name="34" value="2">
+          <label for="342">2</label>
+          <input type="radio" id="343" name="34" value="3">
+          <label for="343">3</label>
+          <input type="radio" id="344" name="34" value="4">
+          <label for="344">4</label>
+          <input type="radio" id="345" name="34" value="5">
+          <label for="345">5</label>
+          <input type="radio" id="346" name="34" value="6">
+          <label for="346">6</label>
+          <input type="radio" id="347" name="34" value="7">
+          <label for="347">7</label>
+          <input type="radio" id="348" name="34" value="8">
+          <label for="348">8</label>
+          <input type="radio" id="349" name="34" value="9">
+          <label for="349">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="350" name="35" value=" ">
+          <label for="350">X</label>
+          <input type="radio" id="351" name="35" value="1">
+          <label for="351">1</label>
+          <input type="radio" id="352" name="35" value="2">
+          <label for="352">2</label>
+          <input type="radio" id="353" name="35" value="3">
+          <label for="353">3</label>
+          <input type="radio" id="354" name="35" value="4">
+          <label for="354">4</label>
+          <input type="radio" id="355" name="35" value="5">
+          <label for="355">5</label>
+          <input type="radio" id="356" name="35" value="6">
+          <label for="356">6</label>
+          <input type="radio" id="357" name="35" value="7">
+          <label for="357">7</label>
+          <input type="radio" id="358" name="35" value="8">
+          <label for="358">8</label>
+          <input type="radio" id="359" name="35" value="9">
+          <label for="359">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="360" name="36" value=" ">
+          <label for="360">X</label>
+          <input type="radio" id="361" name="36" value="1">
+          <label for="361">1</label>
+          <input type="radio" id="362" name="36" value="2">
+          <label for="362">2</label>
+          <input type="radio" id="363" name="36" value="3">
+          <label for="363">3</label>
+          <input type="radio" id="364" name="36" value="4">
+          <label for="364">4</label>
+          <input type="radio" id="365" name="36" value="5">
+          <label for="365">5</label>
+          <input type="radio" id="366" name="36" value="6">
+          <label for="366">6</label>
+          <input type="radio" id="367" name="36" value="7">
+          <label for="367">7</label>
+          <input type="radio" id="368" name="36" value="8">
+          <label for="368">8</label>
+          <input type="radio" id="369" name="36" value="9">
+          <label for="369">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="370" name="37" value=" ">
+          <label for="370">X</label>
+          <input type="radio" id="371" name="37" value="1">
+          <label for="371">1</label>
+          <input type="radio" id="372" name="37" value="2">
+          <label for="372">2</label>
+          <input type="radio" id="373" name="37" value="3">
+          <label for="373">3</label>
+          <input type="radio" id="374" name="37" value="4">
+          <label for="374">4</label>
+          <input type="radio" id="375" name="37" value="5">
+          <label for="375">5</label>
+          <input type="radio" id="376" name="37" value="6">
+          <label for="376">6</label>
+          <input type="radio" id="377" name="37" value="7">
+          <label for="377">7</label>
+          <input type="radio" id="378" name="37" value="8">
+          <label for="378">8</label>
+          <input type="radio" id="379" name="37" value="9">
+          <label for="379">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="380" name="38" value=" ">
+          <label for="380">X</label>
+          <input type="radio" id="381" name="38" value="1">
+          <label for="381">1</label>
+          <input type="radio" id="382" name="38" value="2">
+          <label for="382">2</label>
+          <input type="radio" id="383" name="38" value="3">
+          <label for="383">3</label>
+          <input type="radio" id="384" name="38" value="4">
+          <label for="384">4</label>
+          <input type="radio" id="385" name="38" value="5">
+          <label for="385">5</label>
+          <input type="radio" id="386" name="38" value="6">
+          <label for="386">6</label>
+          <input type="radio" id="387" name="38" value="7">
+          <label for="387">7</label>
+          <input type="radio" id="388" name="38" value="8">
+          <label for="388">8</label>
+          <input type="radio" id="389" name="38" value="9">
+          <label for="389">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="400" name="40" value=" ">
+          <label for="400">X</label>
+          <input type="radio" id="401" name="40" value="1">
+          <label for="401">1</label>
+          <input type="radio" id="402" name="40" value="2">
+          <label for="402">2</label>
+          <input type="radio" id="403" name="40" value="3">
+          <label for="403">3</label>
+          <input type="radio" id="404" name="40" value="4">
+          <label for="404">4</label>
+          <input type="radio" id="405" name="40" value="5">
+          <label for="405">5</label>
+          <input type="radio" id="406" name="40" value="6">
+          <label for="406">6</label>
+          <input type="radio" id="407" name="40" value="7">
+          <label for="407">7</label>
+          <input type="radio" id="408" name="40" value="8">
+          <label for="408">8</label>
+          <input type="radio" id="409" name="40" value="9">
+          <label for="409">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="410" name="41" value=" ">
+          <label for="410">X</label>
+          <input type="radio" id="411" name="41" value="1">
+          <label for="411">1</label>
+          <input type="radio" id="412" name="41" value="2">
+          <label for="412">2</label>
+          <input type="radio" id="413" name="41" value="3">
+          <label for="413">3</label>
+          <input type="radio" id="414" name="41" value="4">
+          <label for="414">4</label>
+          <input type="radio" id="415" name="41" value="5">
+          <label for="415">5</label>
+          <input type="radio" id="416" name="41" value="6">
+          <label for="416">6</label>
+          <input type="radio" id="417" name="41" value="7">
+          <label for="417">7</label>
+          <input type="radio" id="418" name="41" value="8">
+          <label for="418">8</label>
+          <input type="radio" id="419" name="41" value="9">
+          <label for="419">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="420" name="42" value=" ">
+          <label for="420">X</label>
+          <input type="radio" id="421" name="42" value="1">
+          <label for="421">1</label>
+          <input type="radio" id="422" name="42" value="2">
+          <label for="422">2</label>
+          <input type="radio" id="423" name="42" value="3">
+          <label for="423">3</label>
+          <input type="radio" id="424" name="42" value="4">
+          <label for="424">4</label>
+          <input type="radio" id="425" name="42" value="5">
+          <label for="425">5</label>
+          <input type="radio" id="426" name="42" value="6">
+          <label for="426">6</label>
+          <input type="radio" id="427" name="42" value="7">
+          <label for="427">7</label>
+          <input type="radio" id="428" name="42" value="8">
+          <label for="428">8</label>
+          <input type="radio" id="429" name="42" value="9">
+          <label for="429">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="430" name="43" value=" ">
+          <label for="430">X</label>
+          <input type="radio" id="431" name="43" value="1">
+          <label for="431">1</label>
+          <input type="radio" id="432" name="43" value="2">
+          <label for="432">2</label>
+          <input type="radio" id="433" name="43" value="3">
+          <label for="433">3</label>
+          <input type="radio" id="434" name="43" value="4">
+          <label for="434">4</label>
+          <input type="radio" id="435" name="43" value="5">
+          <label for="435">5</label>
+          <input type="radio" id="436" name="43" value="6">
+          <label for="436">6</label>
+          <input type="radio" id="437" name="43" value="7">
+          <label for="437">7</label>
+          <input type="radio" id="438" name="43" value="8">
+          <label for="438">8</label>
+          <input type="radio" id="439" name="43" value="9">
+          <label for="439">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="440" name="44" value=" ">
+          <label for="440">X</label>
+          <input type="radio" id="441" name="44" value="1">
+          <label for="441">1</label>
+          <input type="radio" id="442" name="44" value="2">
+          <label for="442">2</label>
+          <input type="radio" id="443" name="44" value="3">
+          <label for="443">3</label>
+          <input type="radio" id="444" name="44" value="4">
+          <label for="444">4</label>
+          <input type="radio" id="445" name="44" value="5">
+          <label for="445">5</label>
+          <input type="radio" id="446" name="44" value="6">
+          <label for="446">6</label>
+          <input type="radio" id="447" name="44" value="7">
+          <label for="447">7</label>
+          <input type="radio" id="448" name="44" value="8">
+          <label for="448">8</label>
+          <input type="radio" id="449" name="44" value="9">
+          <label for="449">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="450" name="45" value=" ">
+          <label for="450">X</label>
+          <input type="radio" id="451" name="45" value="1">
+          <label for="451">1</label>
+          <input type="radio" id="452" name="45" value="2">
+          <label for="452">2</label>
+          <input type="radio" id="453" name="45" value="3">
+          <label for="453">3</label>
+          <input type="radio" id="454" name="45" value="4">
+          <label for="454">4</label>
+          <input type="radio" id="455" name="45" value="5">
+          <label for="455">5</label>
+          <input type="radio" id="456" name="45" value="6">
+          <label for="456">6</label>
+          <input type="radio" id="457" name="45" value="7">
+          <label for="457">7</label>
+          <input type="radio" id="458" name="45" value="8">
+          <label for="458">8</label>
+          <input type="radio" id="459" name="45" value="9">
+          <label for="459">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="460" name="46" value=" ">
+          <label for="460">X</label>
+          <input type="radio" id="461" name="46" value="1">
+          <label for="461">1</label>
+          <input type="radio" id="462" name="46" value="2">
+          <label for="462">2</label>
+          <input type="radio" id="463" name="46" value="3">
+          <label for="463">3</label>
+          <input type="radio" id="464" name="46" value="4">
+          <label for="464">4</label>
+          <input type="radio" id="465" name="46" value="5">
+          <label for="465">5</label>
+          <input type="radio" id="466" name="46" value="6">
+          <label for="466">6</label>
+          <input type="radio" id="467" name="46" value="7">
+          <label for="467">7</label>
+          <input type="radio" id="468" name="46" value="8">
+          <label for="468">8</label>
+          <input type="radio" id="469" name="46" value="9">
+          <label for="469">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="470" name="47" value=" ">
+          <label for="470">X</label>
+          <input type="radio" id="471" name="47" value="1">
+          <label for="471">1</label>
+          <input type="radio" id="472" name="47" value="2">
+          <label for="472">2</label>
+          <input type="radio" id="473" name="47" value="3">
+          <label for="473">3</label>
+          <input type="radio" id="474" name="47" value="4">
+          <label for="474">4</label>
+          <input type="radio" id="475" name="47" value="5">
+          <label for="475">5</label>
+          <input type="radio" id="476" name="47" value="6">
+          <label for="476">6</label>
+          <input type="radio" id="477" name="47" value="7">
+          <label for="477">7</label>
+          <input type="radio" id="478" name="47" value="8">
+          <label for="478">8</label>
+          <input type="radio" id="479" name="47" value="9">
+          <label for="479">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="480" name="48" value=" ">
+          <label for="480">X</label>
+          <input type="radio" id="481" name="48" value="1">
+          <label for="481">1</label>
+          <input type="radio" id="482" name="48" value="2">
+          <label for="482">2</label>
+          <input type="radio" id="483" name="48" value="3">
+          <label for="483">3</label>
+          <input type="radio" id="484" name="48" value="4">
+          <label for="484">4</label>
+          <input type="radio" id="485" name="48" value="5">
+          <label for="485">5</label>
+          <input type="radio" id="486" name="48" value="6">
+          <label for="486">6</label>
+          <input type="radio" id="487" name="48" value="7">
+          <label for="487">7</label>
+          <input type="radio" id="488" name="48" value="8">
+          <label for="488">8</label>
+          <input type="radio" id="489" name="48" value="9">
+          <label for="489">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="500" name="50" value=" ">
+          <label for="500">X</label>
+          <input type="radio" id="501" name="50" value="1">
+          <label for="501">1</label>
+          <input type="radio" id="502" name="50" value="2">
+          <label for="502">2</label>
+          <input type="radio" id="503" name="50" value="3">
+          <label for="503">3</label>
+          <input type="radio" id="504" name="50" value="4">
+          <label for="504">4</label>
+          <input type="radio" id="505" name="50" value="5">
+          <label for="505">5</label>
+          <input type="radio" id="506" name="50" value="6">
+          <label for="506">6</label>
+          <input type="radio" id="507" name="50" value="7">
+          <label for="507">7</label>
+          <input type="radio" id="508" name="50" value="8">
+          <label for="508">8</label>
+          <input type="radio" id="509" name="50" value="9">
+          <label for="509">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="510" name="51" value=" ">
+          <label for="510">X</label>
+          <input type="radio" id="511" name="51" value="1">
+          <label for="511">1</label>
+          <input type="radio" id="512" name="51" value="2">
+          <label for="512">2</label>
+          <input type="radio" id="513" name="51" value="3">
+          <label for="513">3</label>
+          <input type="radio" id="514" name="51" value="4">
+          <label for="514">4</label>
+          <input type="radio" id="515" name="51" value="5">
+          <label for="515">5</label>
+          <input type="radio" id="516" name="51" value="6">
+          <label for="516">6</label>
+          <input type="radio" id="517" name="51" value="7">
+          <label for="517">7</label>
+          <input type="radio" id="518" name="51" value="8">
+          <label for="518">8</label>
+          <input type="radio" id="519" name="51" value="9">
+          <label for="519">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="520" name="52" value=" ">
+          <label for="520">X</label>
+          <input type="radio" id="521" name="52" value="1">
+          <label for="521">1</label>
+          <input type="radio" id="522" name="52" value="2">
+          <label for="522">2</label>
+          <input type="radio" id="523" name="52" value="3">
+          <label for="523">3</label>
+          <input type="radio" id="524" name="52" value="4">
+          <label for="524">4</label>
+          <input type="radio" id="525" name="52" value="5">
+          <label for="525">5</label>
+          <input type="radio" id="526" name="52" value="6">
+          <label for="526">6</label>
+          <input type="radio" id="527" name="52" value="7">
+          <label for="527">7</label>
+          <input type="radio" id="528" name="52" value="8">
+          <label for="528">8</label>
+          <input type="radio" id="529" name="52" value="9">
+          <label for="529">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="530" name="53" value=" ">
+          <label for="530">X</label>
+          <input type="radio" id="531" name="53" value="1">
+          <label for="531">1</label>
+          <input type="radio" id="532" name="53" value="2">
+          <label for="532">2</label>
+          <input type="radio" id="533" name="53" value="3">
+          <label for="533">3</label>
+          <input type="radio" id="534" name="53" value="4">
+          <label for="534">4</label>
+          <input type="radio" id="535" name="53" value="5">
+          <label for="535">5</label>
+          <input type="radio" id="536" name="53" value="6">
+          <label for="536">6</label>
+          <input type="radio" id="537" name="53" value="7">
+          <label for="537">7</label>
+          <input type="radio" id="538" name="53" value="8">
+          <label for="538">8</label>
+          <input type="radio" id="539" name="53" value="9">
+          <label for="539">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="540" name="54" value=" ">
+          <label for="540">X</label>
+          <input type="radio" id="541" name="54" value="1">
+          <label for="541">1</label>
+          <input type="radio" id="542" name="54" value="2">
+          <label for="542">2</label>
+          <input type="radio" id="543" name="54" value="3">
+          <label for="543">3</label>
+          <input type="radio" id="544" name="54" value="4">
+          <label for="544">4</label>
+          <input type="radio" id="545" name="54" value="5">
+          <label for="545">5</label>
+          <input type="radio" id="546" name="54" value="6">
+          <label for="546">6</label>
+          <input type="radio" id="547" name="54" value="7">
+          <label for="547">7</label>
+          <input type="radio" id="548" name="54" value="8">
+          <label for="548">8</label>
+          <input type="radio" id="549" name="54" value="9">
+          <label for="549">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="550" name="55" value=" ">
+          <label for="550">X</label>
+          <input type="radio" id="551" name="55" value="1">
+          <label for="551">1</label>
+          <input type="radio" id="552" name="55" value="2">
+          <label for="552">2</label>
+          <input type="radio" id="553" name="55" value="3">
+          <label for="553">3</label>
+          <input type="radio" id="554" name="55" value="4">
+          <label for="554">4</label>
+          <input type="radio" id="555" name="55" value="5">
+          <label for="555">5</label>
+          <input type="radio" id="556" name="55" value="6">
+          <label for="556">6</label>
+          <input type="radio" id="557" name="55" value="7">
+          <label for="557">7</label>
+          <input type="radio" id="558" name="55" value="8">
+          <label for="558">8</label>
+          <input type="radio" id="559" name="55" value="9">
+          <label for="559">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="560" name="56" value=" ">
+          <label for="560">X</label>
+          <input type="radio" id="561" name="56" value="1">
+          <label for="561">1</label>
+          <input type="radio" id="562" name="56" value="2">
+          <label for="562">2</label>
+          <input type="radio" id="563" name="56" value="3">
+          <label for="563">3</label>
+          <input type="radio" id="564" name="56" value="4">
+          <label for="564">4</label>
+          <input type="radio" id="565" name="56" value="5">
+          <label for="565">5</label>
+          <input type="radio" id="566" name="56" value="6">
+          <label for="566">6</label>
+          <input type="radio" id="567" name="56" value="7">
+          <label for="567">7</label>
+          <input type="radio" id="568" name="56" value="8">
+          <label for="568">8</label>
+          <input type="radio" id="569" name="56" value="9">
+          <label for="569">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="570" name="57" value=" ">
+          <label for="570">X</label>
+          <input type="radio" id="571" name="57" value="1">
+          <label for="571">1</label>
+          <input type="radio" id="572" name="57" value="2">
+          <label for="572">2</label>
+          <input type="radio" id="573" name="57" value="3">
+          <label for="573">3</label>
+          <input type="radio" id="574" name="57" value="4">
+          <label for="574">4</label>
+          <input type="radio" id="575" name="57" value="5">
+          <label for="575">5</label>
+          <input type="radio" id="576" name="57" value="6">
+          <label for="576">6</label>
+          <input type="radio" id="577" name="57" value="7">
+          <label for="577">7</label>
+          <input type="radio" id="578" name="57" value="8">
+          <label for="578">8</label>
+          <input type="radio" id="579" name="57" value="9">
+          <label for="579">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="580" name="58" value=" ">
+          <label for="580">X</label>
+          <input type="radio" id="581" name="58" value="1">
+          <label for="581">1</label>
+          <input type="radio" id="582" name="58" value="2">
+          <label for="582">2</label>
+          <input type="radio" id="583" name="58" value="3">
+          <label for="583">3</label>
+          <input type="radio" id="584" name="58" value="4">
+          <label for="584">4</label>
+          <input type="radio" id="585" name="58" value="5">
+          <label for="585">5</label>
+          <input type="radio" id="586" name="58" value="6">
+          <label for="586">6</label>
+          <input type="radio" id="587" name="58" value="7">
+          <label for="587">7</label>
+          <input type="radio" id="588" name="58" value="8">
+          <label for="588">8</label>
+          <input type="radio" id="589" name="58" value="9">
+          <label for="589">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="600" name="60" value=" ">
+          <label for="600">X</label>
+          <input type="radio" id="601" name="60" value="1">
+          <label for="601">1</label>
+          <input type="radio" id="602" name="60" value="2">
+          <label for="602">2</label>
+          <input type="radio" id="603" name="60" value="3">
+          <label for="603">3</label>
+          <input type="radio" id="604" name="60" value="4">
+          <label for="604">4</label>
+          <input type="radio" id="605" name="60" value="5">
+          <label for="605">5</label>
+          <input type="radio" id="606" name="60" value="6">
+          <label for="606">6</label>
+          <input type="radio" id="607" name="60" value="7">
+          <label for="607">7</label>
+          <input type="radio" id="608" name="60" value="8">
+          <label for="608">8</label>
+          <input type="radio" id="609" name="60" value="9">
+          <label for="609">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="610" name="61" value=" ">
+          <label for="610">X</label>
+          <input type="radio" id="611" name="61" value="1">
+          <label for="611">1</label>
+          <input type="radio" id="612" name="61" value="2">
+          <label for="612">2</label>
+          <input type="radio" id="613" name="61" value="3">
+          <label for="613">3</label>
+          <input type="radio" id="614" name="61" value="4">
+          <label for="614">4</label>
+          <input type="radio" id="615" name="61" value="5">
+          <label for="615">5</label>
+          <input type="radio" id="616" name="61" value="6">
+          <label for="616">6</label>
+          <input type="radio" id="617" name="61" value="7">
+          <label for="617">7</label>
+          <input type="radio" id="618" name="61" value="8">
+          <label for="618">8</label>
+          <input type="radio" id="619" name="61" value="9">
+          <label for="619">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="620" name="62" value=" ">
+          <label for="620">X</label>
+          <input type="radio" id="621" name="62" value="1">
+          <label for="621">1</label>
+          <input type="radio" id="622" name="62" value="2">
+          <label for="622">2</label>
+          <input type="radio" id="623" name="62" value="3">
+          <label for="623">3</label>
+          <input type="radio" id="624" name="62" value="4">
+          <label for="624">4</label>
+          <input type="radio" id="625" name="62" value="5">
+          <label for="625">5</label>
+          <input type="radio" id="626" name="62" value="6">
+          <label for="626">6</label>
+          <input type="radio" id="627" name="62" value="7">
+          <label for="627">7</label>
+          <input type="radio" id="628" name="62" value="8">
+          <label for="628">8</label>
+          <input type="radio" id="629" name="62" value="9">
+          <label for="629">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="630" name="63" value=" ">
+          <label for="630">X</label>
+          <input type="radio" id="631" name="63" value="1">
+          <label for="631">1</label>
+          <input type="radio" id="632" name="63" value="2">
+          <label for="632">2</label>
+          <input type="radio" id="633" name="63" value="3">
+          <label for="633">3</label>
+          <input type="radio" id="634" name="63" value="4">
+          <label for="634">4</label>
+          <input type="radio" id="635" name="63" value="5">
+          <label for="635">5</label>
+          <input type="radio" id="636" name="63" value="6">
+          <label for="636">6</label>
+          <input type="radio" id="637" name="63" value="7">
+          <label for="637">7</label>
+          <input type="radio" id="638" name="63" value="8">
+          <label for="638">8</label>
+          <input type="radio" id="639" name="63" value="9">
+          <label for="639">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="640" name="64" value=" ">
+          <label for="640">X</label>
+          <input type="radio" id="641" name="64" value="1">
+          <label for="641">1</label>
+          <input type="radio" id="642" name="64" value="2">
+          <label for="642">2</label>
+          <input type="radio" id="643" name="64" value="3">
+          <label for="643">3</label>
+          <input type="radio" id="644" name="64" value="4">
+          <label for="644">4</label>
+          <input type="radio" id="645" name="64" value="5">
+          <label for="645">5</label>
+          <input type="radio" id="646" name="64" value="6">
+          <label for="646">6</label>
+          <input type="radio" id="647" name="64" value="7">
+          <label for="647">7</label>
+          <input type="radio" id="648" name="64" value="8">
+          <label for="648">8</label>
+          <input type="radio" id="649" name="64" value="9">
+          <label for="649">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="650" name="65" value=" ">
+          <label for="650">X</label>
+          <input type="radio" id="651" name="65" value="1">
+          <label for="651">1</label>
+          <input type="radio" id="652" name="65" value="2">
+          <label for="652">2</label>
+          <input type="radio" id="653" name="65" value="3">
+          <label for="653">3</label>
+          <input type="radio" id="654" name="65" value="4">
+          <label for="654">4</label>
+          <input type="radio" id="655" name="65" value="5">
+          <label for="655">5</label>
+          <input type="radio" id="656" name="65" value="6">
+          <label for="656">6</label>
+          <input type="radio" id="657" name="65" value="7">
+          <label for="657">7</label>
+          <input type="radio" id="658" name="65" value="8">
+          <label for="658">8</label>
+          <input type="radio" id="659" name="65" value="9">
+          <label for="659">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="660" name="66" value=" ">
+          <label for="660">X</label>
+          <input type="radio" id="661" name="66" value="1">
+          <label for="661">1</label>
+          <input type="radio" id="662" name="66" value="2">
+          <label for="662">2</label>
+          <input type="radio" id="663" name="66" value="3">
+          <label for="663">3</label>
+          <input type="radio" id="664" name="66" value="4">
+          <label for="664">4</label>
+          <input type="radio" id="665" name="66" value="5">
+          <label for="665">5</label>
+          <input type="radio" id="666" name="66" value="6">
+          <label for="666">6</label>
+          <input type="radio" id="667" name="66" value="7">
+          <label for="667">7</label>
+          <input type="radio" id="668" name="66" value="8">
+          <label for="668">8</label>
+          <input type="radio" id="669" name="66" value="9">
+          <label for="669">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="670" name="67" value=" ">
+          <label for="670">X</label>
+          <input type="radio" id="671" name="67" value="1">
+          <label for="671">1</label>
+          <input type="radio" id="672" name="67" value="2">
+          <label for="672">2</label>
+          <input type="radio" id="673" name="67" value="3">
+          <label for="673">3</label>
+          <input type="radio" id="674" name="67" value="4">
+          <label for="674">4</label>
+          <input type="radio" id="675" name="67" value="5">
+          <label for="675">5</label>
+          <input type="radio" id="676" name="67" value="6">
+          <label for="676">6</label>
+          <input type="radio" id="677" name="67" value="7">
+          <label for="677">7</label>
+          <input type="radio" id="678" name="67" value="8">
+          <label for="678">8</label>
+          <input type="radio" id="679" name="67" value="9">
+          <label for="679">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="680" name="68" value=" ">
+          <label for="680">X</label>
+          <input type="radio" id="681" name="68" value="1">
+          <label for="681">1</label>
+          <input type="radio" id="682" name="68" value="2">
+          <label for="682">2</label>
+          <input type="radio" id="683" name="68" value="3">
+          <label for="683">3</label>
+          <input type="radio" id="684" name="68" value="4">
+          <label for="684">4</label>
+          <input type="radio" id="685" name="68" value="5">
+          <label for="685">5</label>
+          <input type="radio" id="686" name="68" value="6">
+          <label for="686">6</label>
+          <input type="radio" id="687" name="68" value="7">
+          <label for="687">7</label>
+          <input type="radio" id="688" name="68" value="8">
+          <label for="688">8</label>
+          <input type="radio" id="689" name="68" value="9">
+          <label for="689">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="700" name="70" value=" ">
+          <label for="700">X</label>
+          <input type="radio" id="701" name="70" value="1">
+          <label for="701">1</label>
+          <input type="radio" id="702" name="70" value="2">
+          <label for="702">2</label>
+          <input type="radio" id="703" name="70" value="3">
+          <label for="703">3</label>
+          <input type="radio" id="704" name="70" value="4">
+          <label for="704">4</label>
+          <input type="radio" id="705" name="70" value="5">
+          <label for="705">5</label>
+          <input type="radio" id="706" name="70" value="6">
+          <label for="706">6</label>
+          <input type="radio" id="707" name="70" value="7">
+          <label for="707">7</label>
+          <input type="radio" id="708" name="70" value="8">
+          <label for="708">8</label>
+          <input type="radio" id="709" name="70" value="9">
+          <label for="709">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="710" name="71" value=" ">
+          <label for="710">X</label>
+          <input type="radio" id="711" name="71" value="1">
+          <label for="711">1</label>
+          <input type="radio" id="712" name="71" value="2">
+          <label for="712">2</label>
+          <input type="radio" id="713" name="71" value="3">
+          <label for="713">3</label>
+          <input type="radio" id="714" name="71" value="4">
+          <label for="714">4</label>
+          <input type="radio" id="715" name="71" value="5">
+          <label for="715">5</label>
+          <input type="radio" id="716" name="71" value="6">
+          <label for="716">6</label>
+          <input type="radio" id="717" name="71" value="7">
+          <label for="717">7</label>
+          <input type="radio" id="718" name="71" value="8">
+          <label for="718">8</label>
+          <input type="radio" id="719" name="71" value="9">
+          <label for="719">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="720" name="72" value=" ">
+          <label for="720">X</label>
+          <input type="radio" id="721" name="72" value="1">
+          <label for="721">1</label>
+          <input type="radio" id="722" name="72" value="2">
+          <label for="722">2</label>
+          <input type="radio" id="723" name="72" value="3">
+          <label for="723">3</label>
+          <input type="radio" id="724" name="72" value="4">
+          <label for="724">4</label>
+          <input type="radio" id="725" name="72" value="5">
+          <label for="725">5</label>
+          <input type="radio" id="726" name="72" value="6">
+          <label for="726">6</label>
+          <input type="radio" id="727" name="72" value="7">
+          <label for="727">7</label>
+          <input type="radio" id="728" name="72" value="8">
+          <label for="728">8</label>
+          <input type="radio" id="729" name="72" value="9">
+          <label for="729">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="730" name="73" value=" ">
+          <label for="730">X</label>
+          <input type="radio" id="731" name="73" value="1">
+          <label for="731">1</label>
+          <input type="radio" id="732" name="73" value="2">
+          <label for="732">2</label>
+          <input type="radio" id="733" name="73" value="3">
+          <label for="733">3</label>
+          <input type="radio" id="734" name="73" value="4">
+          <label for="734">4</label>
+          <input type="radio" id="735" name="73" value="5">
+          <label for="735">5</label>
+          <input type="radio" id="736" name="73" value="6">
+          <label for="736">6</label>
+          <input type="radio" id="737" name="73" value="7">
+          <label for="737">7</label>
+          <input type="radio" id="738" name="73" value="8">
+          <label for="738">8</label>
+          <input type="radio" id="739" name="73" value="9">
+          <label for="739">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="740" name="74" value=" ">
+          <label for="740">X</label>
+          <input type="radio" id="741" name="74" value="1">
+          <label for="741">1</label>
+          <input type="radio" id="742" name="74" value="2">
+          <label for="742">2</label>
+          <input type="radio" id="743" name="74" value="3">
+          <label for="743">3</label>
+          <input type="radio" id="744" name="74" value="4">
+          <label for="744">4</label>
+          <input type="radio" id="745" name="74" value="5">
+          <label for="745">5</label>
+          <input type="radio" id="746" name="74" value="6">
+          <label for="746">6</label>
+          <input type="radio" id="747" name="74" value="7">
+          <label for="747">7</label>
+          <input type="radio" id="748" name="74" value="8">
+          <label for="748">8</label>
+          <input type="radio" id="749" name="74" value="9">
+          <label for="749">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="750" name="75" value=" ">
+          <label for="750">X</label>
+          <input type="radio" id="751" name="75" value="1">
+          <label for="751">1</label>
+          <input type="radio" id="752" name="75" value="2">
+          <label for="752">2</label>
+          <input type="radio" id="753" name="75" value="3">
+          <label for="753">3</label>
+          <input type="radio" id="754" name="75" value="4">
+          <label for="754">4</label>
+          <input type="radio" id="755" name="75" value="5">
+          <label for="755">5</label>
+          <input type="radio" id="756" name="75" value="6">
+          <label for="756">6</label>
+          <input type="radio" id="757" name="75" value="7">
+          <label for="757">7</label>
+          <input type="radio" id="758" name="75" value="8">
+          <label for="758">8</label>
+          <input type="radio" id="759" name="75" value="9">
+          <label for="759">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="760" name="76" value=" ">
+          <label for="760">X</label>
+          <input type="radio" id="761" name="76" value="1">
+          <label for="761">1</label>
+          <input type="radio" id="762" name="76" value="2">
+          <label for="762">2</label>
+          <input type="radio" id="763" name="76" value="3">
+          <label for="763">3</label>
+          <input type="radio" id="764" name="76" value="4">
+          <label for="764">4</label>
+          <input type="radio" id="765" name="76" value="5">
+          <label for="765">5</label>
+          <input type="radio" id="766" name="76" value="6">
+          <label for="766">6</label>
+          <input type="radio" id="767" name="76" value="7">
+          <label for="767">7</label>
+          <input type="radio" id="768" name="76" value="8">
+          <label for="768">8</label>
+          <input type="radio" id="769" name="76" value="9">
+          <label for="769">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="770" name="77" value=" ">
+          <label for="770">X</label>
+          <input type="radio" id="771" name="77" value="1">
+          <label for="771">1</label>
+          <input type="radio" id="772" name="77" value="2">
+          <label for="772">2</label>
+          <input type="radio" id="773" name="77" value="3">
+          <label for="773">3</label>
+          <input type="radio" id="774" name="77" value="4">
+          <label for="774">4</label>
+          <input type="radio" id="775" name="77" value="5">
+          <label for="775">5</label>
+          <input type="radio" id="776" name="77" value="6">
+          <label for="776">6</label>
+          <input type="radio" id="777" name="77" value="7">
+          <label for="777">7</label>
+          <input type="radio" id="778" name="77" value="8">
+          <label for="778">8</label>
+          <input type="radio" id="779" name="77" value="9">
+          <label for="779">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="780" name="78" value=" ">
+          <label for="780">X</label>
+          <input type="radio" id="781" name="78" value="1">
+          <label for="781">1</label>
+          <input type="radio" id="782" name="78" value="2">
+          <label for="782">2</label>
+          <input type="radio" id="783" name="78" value="3">
+          <label for="783">3</label>
+          <input type="radio" id="784" name="78" value="4">
+          <label for="784">4</label>
+          <input type="radio" id="785" name="78" value="5">
+          <label for="785">5</label>
+          <input type="radio" id="786" name="78" value="6">
+          <label for="786">6</label>
+          <input type="radio" id="787" name="78" value="7">
+          <label for="787">7</label>
+          <input type="radio" id="788" name="78" value="8">
+          <label for="788">8</label>
+          <input type="radio" id="789" name="78" value="9">
+          <label for="789">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="800" name="80" value=" ">
+          <label for="800">X</label>
+          <input type="radio" id="801" name="80" value="1">
+          <label for="801">1</label>
+          <input type="radio" id="802" name="80" value="2">
+          <label for="802">2</label>
+          <input type="radio" id="803" name="80" value="3">
+          <label for="803">3</label>
+          <input type="radio" id="804" name="80" value="4">
+          <label for="804">4</label>
+          <input type="radio" id="805" name="80" value="5">
+          <label for="805">5</label>
+          <input type="radio" id="806" name="80" value="6">
+          <label for="806">6</label>
+          <input type="radio" id="807" name="80" value="7">
+          <label for="807">7</label>
+          <input type="radio" id="808" name="80" value="8">
+          <label for="808">8</label>
+          <input type="radio" id="809" name="80" value="9">
+          <label for="809">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="810" name="81" value=" ">
+          <label for="810">X</label>
+          <input type="radio" id="811" name="81" value="1">
+          <label for="811">1</label>
+          <input type="radio" id="812" name="81" value="2">
+          <label for="812">2</label>
+          <input type="radio" id="813" name="81" value="3">
+          <label for="813">3</label>
+          <input type="radio" id="814" name="81" value="4">
+          <label for="814">4</label>
+          <input type="radio" id="815" name="81" value="5">
+          <label for="815">5</label>
+          <input type="radio" id="816" name="81" value="6">
+          <label for="816">6</label>
+          <input type="radio" id="817" name="81" value="7">
+          <label for="817">7</label>
+          <input type="radio" id="818" name="81" value="8">
+          <label for="818">8</label>
+          <input type="radio" id="819" name="81" value="9">
+          <label for="819">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="820" name="82" value=" ">
+          <label for="820">X</label>
+          <input type="radio" id="821" name="82" value="1">
+          <label for="821">1</label>
+          <input type="radio" id="822" name="82" value="2">
+          <label for="822">2</label>
+          <input type="radio" id="823" name="82" value="3">
+          <label for="823">3</label>
+          <input type="radio" id="824" name="82" value="4">
+          <label for="824">4</label>
+          <input type="radio" id="825" name="82" value="5">
+          <label for="825">5</label>
+          <input type="radio" id="826" name="82" value="6">
+          <label for="826">6</label>
+          <input type="radio" id="827" name="82" value="7">
+          <label for="827">7</label>
+          <input type="radio" id="828" name="82" value="8">
+          <label for="828">8</label>
+          <input type="radio" id="829" name="82" value="9">
+          <label for="829">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="830" name="83" value=" ">
+          <label for="830">X</label>
+          <input type="radio" id="831" name="83" value="1">
+          <label for="831">1</label>
+          <input type="radio" id="832" name="83" value="2">
+          <label for="832">2</label>
+          <input type="radio" id="833" name="83" value="3">
+          <label for="833">3</label>
+          <input type="radio" id="834" name="83" value="4">
+          <label for="834">4</label>
+          <input type="radio" id="835" name="83" value="5">
+          <label for="835">5</label>
+          <input type="radio" id="836" name="83" value="6">
+          <label for="836">6</label>
+          <input type="radio" id="837" name="83" value="7">
+          <label for="837">7</label>
+          <input type="radio" id="838" name="83" value="8">
+          <label for="838">8</label>
+          <input type="radio" id="839" name="83" value="9">
+          <label for="839">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="840" name="84" value=" ">
+          <label for="840">X</label>
+          <input type="radio" id="841" name="84" value="1">
+          <label for="841">1</label>
+          <input type="radio" id="842" name="84" value="2">
+          <label for="842">2</label>
+          <input type="radio" id="843" name="84" value="3">
+          <label for="843">3</label>
+          <input type="radio" id="844" name="84" value="4">
+          <label for="844">4</label>
+          <input type="radio" id="845" name="84" value="5">
+          <label for="845">5</label>
+          <input type="radio" id="846" name="84" value="6">
+          <label for="846">6</label>
+          <input type="radio" id="847" name="84" value="7">
+          <label for="847">7</label>
+          <input type="radio" id="848" name="84" value="8">
+          <label for="848">8</label>
+          <input type="radio" id="849" name="84" value="9">
+          <label for="849">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="850" name="85" value=" ">
+          <label for="850">X</label>
+          <input type="radio" id="851" name="85" value="1">
+          <label for="851">1</label>
+          <input type="radio" id="852" name="85" value="2">
+          <label for="852">2</label>
+          <input type="radio" id="853" name="85" value="3">
+          <label for="853">3</label>
+          <input type="radio" id="854" name="85" value="4">
+          <label for="854">4</label>
+          <input type="radio" id="855" name="85" value="5">
+          <label for="855">5</label>
+          <input type="radio" id="856" name="85" value="6">
+          <label for="856">6</label>
+          <input type="radio" id="857" name="85" value="7">
+          <label for="857">7</label>
+          <input type="radio" id="858" name="85" value="8">
+          <label for="858">8</label>
+          <input type="radio" id="859" name="85" value="9">
+          <label for="859">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="860" name="86" value=" ">
+          <label for="860">X</label>
+          <input type="radio" id="861" name="86" value="1">
+          <label for="861">1</label>
+          <input type="radio" id="862" name="86" value="2">
+          <label for="862">2</label>
+          <input type="radio" id="863" name="86" value="3">
+          <label for="863">3</label>
+          <input type="radio" id="864" name="86" value="4">
+          <label for="864">4</label>
+          <input type="radio" id="865" name="86" value="5">
+          <label for="865">5</label>
+          <input type="radio" id="866" name="86" value="6">
+          <label for="866">6</label>
+          <input type="radio" id="867" name="86" value="7">
+          <label for="867">7</label>
+          <input type="radio" id="868" name="86" value="8">
+          <label for="868">8</label>
+          <input type="radio" id="869" name="86" value="9">
+          <label for="869">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="870" name="87" value=" ">
+          <label for="870">X</label>
+          <input type="radio" id="871" name="87" value="1">
+          <label for="871">1</label>
+          <input type="radio" id="872" name="87" value="2">
+          <label for="872">2</label>
+          <input type="radio" id="873" name="87" value="3">
+          <label for="873">3</label>
+          <input type="radio" id="874" name="87" value="4">
+          <label for="874">4</label>
+          <input type="radio" id="875" name="87" value="5">
+          <label for="875">5</label>
+          <input type="radio" id="876" name="87" value="6">
+          <label for="876">6</label>
+          <input type="radio" id="877" name="87" value="7">
+          <label for="877">7</label>
+          <input type="radio" id="878" name="87" value="8">
+          <label for="878">8</label>
+          <input type="radio" id="879" name="87" value="9">
+          <label for="879">9</label>
+        </div>
+        
+        <div class="cell" tabindex="0">
+          <input type="radio" id="880" name="88" value=" ">
+          <label for="880">X</label>
+          <input type="radio" id="881" name="88" value="1">
+          <label for="881">1</label>
+          <input type="radio" id="882" name="88" value="2">
+          <label for="882">2</label>
+          <input type="radio" id="883" name="88" value="3">
+          <label for="883">3</label>
+          <input type="radio" id="884" name="88" value="4">
+          <label for="884">4</label>
+          <input type="radio" id="885" name="88" value="5">
+          <label for="885">5</label>
+          <input type="radio" id="886" name="88" value="6">
+          <label for="886">6</label>
+          <input type="radio" id="887" name="88" value="7">
+          <label for="887">7</label>
+          <input type="radio" id="888" name="88" value="8">
+          <label for="888">8</label>
+          <input type="radio" id="889" name="88" value="9">
+          <label for="889">9</label>
+        </div>
+
+      </div>
+      <button type="reset">Start over</button>
+    </form>
+  </body>
+</html>
